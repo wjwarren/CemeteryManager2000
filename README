@@ -1,0 +1,6 @@
+Repo to work together on a first Unity3D game.
+
+Proposed folder structure:
+- design (All design documents.)
+- docs (Project related documents.)
+- unity3d (All files needed to build the Unity3D project.)
