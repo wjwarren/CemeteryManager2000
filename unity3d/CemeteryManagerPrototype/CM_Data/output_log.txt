@@ -1,0 +1,10 @@
+Direct3D:
+    Version:  Direct3D 9.0c [nvd3dum.dll 8.17.12.8562]
+    Renderer: NVIDIA GeForce GTX 470
+    Vendor:   NVIDIA
+    VRAM:     1248 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=0 DF24=0 INTZ=1 RAWZ=0 NULL=1 RESZ=0 SlowINTZ=0
+desktop: 1680x1050 60Hz; virtual: 3600x1080 at -1920,0
+<I> Initializing (RawInput).
+<RI> Input initialized.
+Non platform assembly: data-0317B208 (this message is harmless)
