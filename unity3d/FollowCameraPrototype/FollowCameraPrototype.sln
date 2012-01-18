@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+
+Project("{7597FF8C-3E65-85E2-D355-7267E4952B4C}") = "FollowCameraPrototype", "Assembly-CSharp-firstpass.csproj", "{8856DBFD-E611-5A4B-FA46-E04FD9C76F7D}"
+EndProject
+Project("{7597FF8C-3E65-85E2-D355-7267E4952B4C}") = "FollowCameraPrototype", "Assembly-UnityScript-firstpass.unityproj", "{6F4549B9-AF51-7304-B687-124A9934055A}"
+EndProject
+Project("{7597FF8C-3E65-85E2-D355-7267E4952B4C}") = "FollowCameraPrototype", "Assembly-UnityScript.unityproj", "{74341DB5-9C76-6E88-44E6-F2959E32EC8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8856DBFD-E611-5A4B-FA46-E04FD9C76F7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8856DBFD-E611-5A4B-FA46-E04FD9C76F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8856DBFD-E611-5A4B-FA46-E04FD9C76F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8856DBFD-E611-5A4B-FA46-E04FD9C76F7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F4549B9-AF51-7304-B687-124A9934055A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F4549B9-AF51-7304-B687-124A9934055A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F4549B9-AF51-7304-B687-124A9934055A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F4549B9-AF51-7304-B687-124A9934055A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74341DB5-9C76-6E88-44E6-F2959E32EC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74341DB5-9C76-6E88-44E6-F2959E32EC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74341DB5-9C76-6E88-44E6-F2959E32EC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74341DB5-9C76-6E88-44E6-F2959E32EC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	
+EndGlobal
