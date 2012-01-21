@@ -1,6 +1,8 @@
 Repo to work together on a first Unity3D game.
 
 Proposed folder structure:
+- Art (Design references.)
+- Wips (Work in progress, screenies, etc.)
 - design (All design documents.)
 - docs (Project related documents.)
 - unity3d (All files needed to build the Unity3D project.)
