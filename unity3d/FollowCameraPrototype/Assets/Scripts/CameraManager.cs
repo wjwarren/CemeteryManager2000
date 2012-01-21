@@ -39,17 +39,27 @@ public class CameraManager:MonoBehaviour {
 	public bool scrollAtBorders = true;
 	
 	// Percentage of the screen to use for camera movement.
-	public float scrollableBorderPercentage = 10;
+	public float scrollableBorderPercentage = 15;
+	
+	// Scroll multiplier to apply per step.
+	public float scrollMultiplier = 10;
+	
+	private Rect scrollRect;
+	private Rect maxBounds;
+	private Vector2 previousScreenSize;
 	
 	// Use this for initialization
 	void Start() {
-	
+		previousScreenSize = new Vector2(Screen.width, Screen.height);
+		
+		setScrollRect();
 	}
 	
 	// Update is called once per frame
 	void Update() {
 		if(!smoother || !dummyTarget || !realTarget) return;
 		
+		UpdateScrolling();
 		UpdateDolly();
 		UpdatePosition();
 	}
@@ -94,5 +104,86 @@ public class CameraManager:MonoBehaviour {
 		
 		smoother.distance = newDistance;
 		smoother.height = newHeight;
+	}
+	
+	/**
+	 * Updates the cam target if scrolling at the borders is turned on.
+	 */
+	void UpdateScrolling() {
+		if(!scrollAtBorders || !isMouseInBounds()) return;
+		
+		// Check if screen size has changed
+		if(previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height) {
+			setScrollRect();
+		}
+		
+		Vector3 mousePos = Input.mousePosition;
+		Vector3 newPos = dummyTarget.position;
+		
+		float delta = 0;
+		
+		if(mousePos.x < scrollRect.x) {
+			// Move cam in negative x
+			delta = scrollRect.x - mousePos.x;
+			if(delta < -scrollRect.x) delta = -scrollRect.x;
+			
+			newPos.x -= delta / scrollRect.x * scrollMultiplier;
+		}
+		if(mousePos.x > scrollRect.width) {
+			// Move cam in positive x
+			delta = mousePos.x - scrollRect.width;
+			if(delta > scrollRect.x) delta = scrollRect.x;
+			
+			newPos.x += delta / scrollRect.x * scrollMultiplier;
+		}
+		if(mousePos.y < scrollRect.y) {
+			// Move cam in negative z
+			delta = scrollRect.y - mousePos.y;
+			if(delta < -scrollRect.y) delta = -scrollRect.y;
+			
+			newPos.z -= delta / scrollRect.y * scrollMultiplier;
+		}
+		if(mousePos.y > scrollRect.height) {
+			// Move cam in positive z
+			delta = mousePos.y - scrollRect.height;
+			if(delta > scrollRect.y) delta = scrollRect.y;
+			
+			newPos.z += delta / scrollRect.y * scrollMultiplier;
+		}
+		
+		dummyTarget.position = newPos;
+	}
+	
+	/**
+	 * Calculates the rectangle to use to determine camera scrolling.
+	 */
+	void setScrollRect() {
+		scrollRect = new Rect();
+		scrollRect.x = (float)(Screen.width * scrollableBorderPercentage * 0.01);
+		scrollRect.y = (float)(Screen.height * scrollableBorderPercentage * 0.01);
+		scrollRect.width = (float)(Screen.width * (100- scrollableBorderPercentage) * 0.01);
+		scrollRect.height = (float)(Screen.height * (100- scrollableBorderPercentage) * 0.01);
+		
+		maxBounds = new Rect();
+		maxBounds.x = -scrollRect.x;
+		maxBounds.y = -scrollRect.y;
+		maxBounds.width = Screen.width + scrollRect.x;
+		maxBounds.height = Screen.height + scrollRect.y;
+	}
+	
+	/**
+	 * Determines whether or not the mouse is in the bounding
+	 * area for scrolling.
+	 */
+	bool isMouseInBounds() {
+		bool result = true;
+		Vector3 mousePos = Input.mousePosition;
+		
+		if(mousePos.x < maxBounds.x) result = false;
+		if(mousePos.x > maxBounds.width) result = false;
+		if(mousePos.y < maxBounds.y) result = false;
+		if(mousePos.y > maxBounds.height) result = false;
+		
+		return result;
 	}
 }
