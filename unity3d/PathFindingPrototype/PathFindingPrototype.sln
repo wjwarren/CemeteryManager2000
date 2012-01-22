@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+
+Project("{BE2AAF8E-1C13-C318-4F29-080816F81221}") = "PathFindingPrototype", "Assembly-CSharp.csproj", "{205BC273-5593-3083-BAC1-9CB26470D0F7}"
+EndProject
+Project("{BE2AAF8E-1C13-C318-4F29-080816F81221}") = "PathFindingPrototype", "Assembly-CSharp-Editor.csproj", "{BB9DA0F5-1A7A-03A4-C33C-F1BF5D8529B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{205BC273-5593-3083-BAC1-9CB26470D0F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{205BC273-5593-3083-BAC1-9CB26470D0F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{205BC273-5593-3083-BAC1-9CB26470D0F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{205BC273-5593-3083-BAC1-9CB26470D0F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB9DA0F5-1A7A-03A4-C33C-F1BF5D8529B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB9DA0F5-1A7A-03A4-C33C-F1BF5D8529B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB9DA0F5-1A7A-03A4-C33C-F1BF5D8529B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB9DA0F5-1A7A-03A4-C33C-F1BF5D8529B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	
+EndGlobal
