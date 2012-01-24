@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-// Place the script in the Camera-Control group in the component menu
+// Place the script in the Cemetery Manager 2000 group in the component menu
 [AddComponentMenu("Cemetery Manager 2000/Camera Manager")]
 public class CameraManager:MonoBehaviour {
 	
