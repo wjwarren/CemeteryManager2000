@@ -135,21 +135,21 @@ public class CameraManager:MonoBehaviour {
 			delta = Mathf.Abs(scrollRect.x - mousePos.x) / scrollRect.x;
 			if(delta > 1) delta = 1;
 			
-			movement = dummyTarget.transform.right * scrollMultiplier * delta * Time.deltaTime * -1;
+			movement += dummyTarget.transform.right * scrollMultiplier * delta * Time.deltaTime * -1;
 		}
 		// Right
 		if(mousePos.x > scrollRect.width) {
 			delta = Mathf.Abs(mousePos.x - scrollRect.width) / scrollRect.x;
 			if(delta > 1) delta = 1;
 			
-			movement = dummyTarget.transform.right * scrollMultiplier * delta * Time.deltaTime;
+			movement += dummyTarget.transform.right * scrollMultiplier * delta * Time.deltaTime;
 		}
 		// Backward
 		if(mousePos.y < scrollRect.y) {
 			delta = Mathf.Abs(scrollRect.y - mousePos.y) / scrollRect.x;
 			if(delta > 1) delta = 1;
 			
-			movement = dummyTarget.transform.forward * scrollMultiplier * delta * Time.deltaTime * -1;
+			movement += dummyTarget.transform.forward * scrollMultiplier * delta * Time.deltaTime * -1;
 			
 		}
 		// Forward
@@ -157,7 +157,7 @@ public class CameraManager:MonoBehaviour {
 			delta = Mathf.Abs(mousePos.y - scrollRect.height) / scrollRect.x;
 			if(delta > 1) delta = 1;
 			
-			movement = dummyTarget.transform.forward * scrollMultiplier * delta * Time.deltaTime;
+			movement += dummyTarget.transform.forward * scrollMultiplier * delta * Time.deltaTime;
 		}
 		
 		// Only call Translate when an actual change in position is required.
