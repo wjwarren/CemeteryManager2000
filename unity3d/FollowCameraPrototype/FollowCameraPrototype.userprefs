@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CameraManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\CameraManager.cs" Line="178" Column="26" />
+      <File FileName="Assets\Scripts\CameraManager.cs" Line="129" Column="42" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

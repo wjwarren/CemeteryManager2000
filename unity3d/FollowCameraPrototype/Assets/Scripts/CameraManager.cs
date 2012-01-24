@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 // Place the script in the Camera-Control group in the component menu
-[AddComponentMenu("Camera-Control/CM2000 Camera Manager")]
+[AddComponentMenu("Cemetery Manager 2000/Camera Manager")]
 public class CameraManager:MonoBehaviour {
 	
 	// The smooth script to update.
@@ -14,8 +14,11 @@ public class CameraManager:MonoBehaviour {
 	// Real camera target that will be update based on the dummy and the terrain.
 	public Transform realTarget;
 	
+	// Whether or not to move in the direction the camera is looking.
+	public bool followYRotation = true;
+	
 	// Whether or not the camera should follow the terrain.
-	public bool followTerrain;
+	public bool followTerrain = true;
 	
 	// The terrain to follow.
 	public Terrain terrain;
@@ -42,7 +45,7 @@ public class CameraManager:MonoBehaviour {
 	public float scrollableBorderPercentage = 15;
 	
 	// Scroll multiplier to apply per step.
-	public float scrollMultiplier = 10;
+	public float scrollMultiplier = 150;
 	
 	private Rect scrollRect;
 	private Rect maxBounds;
@@ -51,6 +54,12 @@ public class CameraManager:MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		previousScreenSize = new Vector2(Screen.width, Screen.height);
+		
+		if(dummyTarget && followYRotation) {
+			Quaternion newDummyRotation = dummyTarget.transform.rotation;
+			newDummyRotation.y = transform.rotation.y;
+			dummyTarget.transform.rotation = newDummyRotation;
+		}
 		
 		setScrollRect();
 	}
@@ -107,51 +116,54 @@ public class CameraManager:MonoBehaviour {
 	}
 	
 	/**
-	 * Updates the cam target if scrolling at the borders is turned on.
+	 * Updates the camera target if scrolling at the borders is turned on.
 	 */
 	void UpdateScrolling() {
 		if(!scrollAtBorders || !isMouseInBounds()) return;
 		
-		// Check if screen size has changed
+		// Check if screen size has changed.
 		if(previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height) {
 			setScrollRect();
 		}
 		
-		Vector3 mousePos = Input.mousePosition;
-		Vector3 newPos = dummyTarget.position;
-		
+		Vector3 mousePos = Input.mousePosition;		
 		float delta = 0;
+		Vector3 movement = new Vector3(0, 0, 0);
 		
+		// Left
 		if(mousePos.x < scrollRect.x) {
-			// Move cam in negative x
-			delta = scrollRect.x - mousePos.x;
-			if(delta < -scrollRect.x) delta = -scrollRect.x;
+			delta = Mathf.Abs(scrollRect.x - mousePos.x) / scrollRect.x;
+			if(delta > 1) delta = 1;
 			
-			newPos.x -= delta / scrollRect.x * scrollMultiplier;
+			movement = dummyTarget.transform.right * scrollMultiplier * delta * Time.deltaTime * -1;
 		}
+		// Right
 		if(mousePos.x > scrollRect.width) {
-			// Move cam in positive x
-			delta = mousePos.x - scrollRect.width;
-			if(delta > scrollRect.x) delta = scrollRect.x;
+			delta = Mathf.Abs(mousePos.x - scrollRect.width) / scrollRect.x;
+			if(delta > 1) delta = 1;
 			
-			newPos.x += delta / scrollRect.x * scrollMultiplier;
+			movement = dummyTarget.transform.right * scrollMultiplier * delta * Time.deltaTime;
 		}
+		// Backward
 		if(mousePos.y < scrollRect.y) {
-			// Move cam in negative z
-			delta = scrollRect.y - mousePos.y;
-			if(delta < -scrollRect.y) delta = -scrollRect.y;
+			delta = Mathf.Abs(scrollRect.y - mousePos.y) / scrollRect.x;
+			if(delta > 1) delta = 1;
 			
-			newPos.z -= delta / scrollRect.y * scrollMultiplier;
+			movement = dummyTarget.transform.forward * scrollMultiplier * delta * Time.deltaTime * -1;
+			
 		}
+		// Forward
 		if(mousePos.y > scrollRect.height) {
-			// Move cam in positive z
-			delta = mousePos.y - scrollRect.height;
-			if(delta > scrollRect.y) delta = scrollRect.y;
+			delta = Mathf.Abs(mousePos.y - scrollRect.height) / scrollRect.x;
+			if(delta > 1) delta = 1;
 			
-			newPos.z += delta / scrollRect.y * scrollMultiplier;
+			movement = dummyTarget.transform.forward * scrollMultiplier * delta * Time.deltaTime;
 		}
 		
-		dummyTarget.position = newPos;
+		// Only call Translate when an actual change in position is required.
+		if(movement.sqrMagnitude != 0) {
+			dummyTarget.transform.Translate(movement, Space.World);
+		}
 	}
 	
 	/**
