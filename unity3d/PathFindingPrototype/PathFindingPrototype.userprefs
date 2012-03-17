@@ -1,8 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\DemoSeeker.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\CemeteryManager2K\RandomPathFinder.cs">
     <Files>
-      <File FileName="Assets\Script\DemoSeeker.cs" Line="29" Column="55" />
+      <File FileName="Assets\Script\DemoSeeker.cs" Line="27" Column="50" />
+      <File FileName="Assets\Script\CemeteryManager2K\RandomPathFinder.cs" Line="52" Column="19" />
+      <File FileName="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs" Line="93" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
