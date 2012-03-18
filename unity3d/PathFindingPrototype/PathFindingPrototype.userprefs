@@ -2,7 +2,11 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs">
     <Files>
-      <File FileName="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs" Line="93" Column="3" />
+      <File FileName="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs" Line="97" Column="9" />
+      <File FileName="Assets\Script\CemeteryManager2K\ai\npc\steering\NPCController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\UnitySteer\Vector3Pathway.cs" Line="37" Column="39" />
+      <File FileName="Assets\Script\UnitySteer\PathWay.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\UnitySteer\Behaviors\Steering.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -16,11 +20,12 @@
                       <Node name="steering" expanded="True" />
                     </Node>
                   </Node>
-                  <Node name="path" expanded="True" />
                 </Node>
                 <Node name="UnitySteer" expanded="True">
-                  <Node name="Behaviors" expanded="True" />
-                  <Node name="PathWay.cs" selected="True" />
+                  <Node name="Behaviors" expanded="True">
+                    <Node name="Steering.cs" selected="True" />
+                  </Node>
+                  <Node name="Helpers" expanded="True" />
                 </Node>
               </Node>
             </Node>
