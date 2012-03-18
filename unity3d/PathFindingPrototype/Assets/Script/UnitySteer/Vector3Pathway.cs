@@ -2,10 +2,6 @@
 //
 // Written by Ricardo J. Mendez http://www.arges-systems.com/ based on 
 // OpenSteer's PolylinePathway.
-// 
-// This class is provided to ease the use of AngryAnt's Path. It should be
-// removed if you do not intend to use Path, since otherwise it'll generate
-// compilation errors.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28,43 +24,47 @@
 //
 //
 // ----------------------------------------------------------------------------
-#if false
-using System.Collections;
-using PathLibrary;
 using UnityEngine;
+using C5;
 
 namespace UnitySteer
 {
 	/// <summary>
-	/// Represents a Pathway created from an AngryAnt Path result
+	/// Represents a Pathway created from a list of Vector3s
 	/// </summary>
-	/// <remarks>It requires the Path library for obvious reasons. In a future
-	/// release it will likely be spun off to an independent library.</remarks>
-    public class AngryAntPathway : Pathway
+    public class Vector3Pathway : Pathway
     {
-        private ArrayList   path;
-        private float       totalPathLength;
+        private IList<Vector3>  _path;
+        private float       _totalPathLength;
         
-        private float[]     lengths;
-        private Vector3[]   normals;
-        private Vector3[]   points;
+        private IList<float>   _lengths;
+        private IList<Vector3> _normals;
+        private IList<Vector3> _points;
         
 		/// <summary>
 		/// Minimum radius along the path.
 		/// </summary>
-		/// <remarks>It could be gleaned from the NetworkAssets.</remarks>
-        private float       radius; 
+        protected float       _radius = 0.5f;
+		
+		public IList<Vector3> Path {
+			get {
+				return _path;
+			}
+		}
+		
         
-        public AngryAntPathway () {
-            
+        public Vector3Pathway () {
+			_points = new ArrayList<Vector3>(10);
+			_lengths = new ArrayList<float>(10);
+			_normals = new ArrayList<Vector3>(10);
         }
 
 		
 		/// <summary>
-		/// Constructs a PolylinePathway given an array of points and a path radius
+		/// Constructs a Vector3Pathway given an array of points and a path radius
 		/// </summary>
 		/// <param name="path">
-		/// List of ConnectionAsset returned from Path <see cref="ConnectionAsset"/>
+		/// List of Vector3 to be used for the path in world space <see cref="Vector3"/>
 		/// </param>
 		/// <param name="radius">
 		/// Radius to use for the connections <see cref="System.Single"/>
@@ -73,34 +73,38 @@ namespace UnitySteer
 		/// Is the path cyclic? <see cref="System.Boolean"/>
 		/// </param>
 		/// <remarks>The current implementation assumes that all pathways will 
-		/// have the same radius.  The connection radius could be taken from the 
-		/// NetworkAssets in Path, which should be what we do in future implementations.
+		/// have the same radius.
 		/// </remarks>
-        public AngryAntPathway (ArrayList path, float radius, bool cyclic)
+        public Vector3Pathway (IList<Vector3> path, float radius, bool cyclic)
         {
-            initialize(path, radius, cyclic);
+            Initialize(path, radius, cyclic);
         }
 
         protected override Vector3 GetFirstPoint()
         {
-            return points[0];
+            return _points.First;
         }
         
         protected override Vector3 GetLastPoint()
         {
-            return points[points.Length-1];
+            return _points.Last;
         }
         
         protected override float GetTotalPathLength()
         {
-            return totalPathLength;
+            return _totalPathLength;
         }
+		
+		protected override int GetSegmentCount()
+		{
+			return _points.Count;
+		}
         
 		/// <summary>
-		/// Constructs the Pathway from a list of ConnectionAssets
+		/// Constructs the Pathway from a list of Vector3
 		/// </summary>
 		/// <param name="path">
-		/// A list of ConnectionAssets as returned by Path <see cref="ConnectionAsset"/>
+		/// A list of Vector3 defining the path points in world space<see cref="Vector3"/>
 		/// </param>
 		/// <param name="radius">
 		/// Radius to use for the connections<see cref="System.Single"/>
@@ -108,91 +112,100 @@ namespace UnitySteer
 		/// <param name="cyclic">
 		/// Is the path cyclic?
 		/// </param>
-        void initialize (ArrayList path, float radius, bool cyclic)
+        public void Initialize (IList<Vector3> path, float radius, bool cyclic)
         {
-            this.path = path;
-            this.radius  = radius;
-            this.isCyclic = cyclic;
+            this._path = path;
+            this._radius  = radius;
+			// TODO: Disregard cyclic, acquire quick test
+            this.IsCyclic = false;
             
             // set data members, allocate arrays
             int pointCount = path.Count;
-            totalPathLength = 0;
+            _totalPathLength = 0;
             if (cyclic) 
             {
                 pointCount++;
             }
-            points  = new Vector3[pointCount];
-            lengths = new float[pointCount];
-            normals = new Vector3[pointCount];
+            _points  = new ArrayList<Vector3>(pointCount);
+            _lengths = new ArrayList<float>(pointCount);
+            _normals = new ArrayList<Vector3>(pointCount);
 
             // loop over all points
             for (int i = 0; i < pointCount; i++)
             {
-                // copy in point locations, closing cycle when appropriate
-                bool closeCycle = cyclic && (i == pointCount-1);
-                int j = closeCycle ? 0 : i;
-                points[i] = ((ConnectionAsset)path[j]).To.AbsolutePosition;
-
-                // for the end of each segment
-                if (i > 0)
-                {
-                    // compute the segment length
-                    normals[i] = points[i] - points[i-1];
-                    lengths[i] = normals[i].magnitude;
-
-                    // find the normalized vector parallel to the segment
-                    normals[i] *= 1 / lengths[i];
-
-                    // keep running total of segment lengths
-                    totalPathLength += lengths[i];
-                }
+				AddPoint(path[i]);
             }
         }
+		
+		public void AddPoint(Vector3 point)
+		{
+		    if (_points.Count > 0)
+            {
+                // compute the segment length
+				var normal = point - _points.Last;
+				var length = normal.magnitude;
+				_lengths.Add(length);
+				_normals.Add(normal / length);
+				// keep running total of segment lengths
+                _totalPathLength += length;
+            }
+			else
+			{
+				_normals.Add(Vector3.zero);
+				_lengths.Add(0);
+			}
+			_points.Add(point);
+		}
         
-
-        public override Vector3 mapPointToPath(Vector3 point, ref mapReturnStruct tStruct)
+        public override Vector3 MapPointToPath(Vector3 point, ref PathRelativePosition pathRelative)
         {
             float d;
             float minDistance = float.MaxValue;
             Vector3 onPath = Vector3.zero;
-
+			
+			pathRelative.segmentIndex = -1;
             // loop over all segments, find the one nearest to the given point
-            for (int i = 1; i < points.Length; i++)
+            for (int i = 1; i < _points.Count; i++)
             {
-                float   segmentLength = lengths[i];
-                Vector3 segmentNormal = normals[i];
+                float   segmentLength = _lengths[i];
+                Vector3 segmentNormal = _normals[i];
                 Vector3 chosenPoint = Vector3.zero;
-                d = OpenSteerUtility.PointToSegmentDistance(point, points[i-1], points[i], 
+                d = OpenSteerUtility.PointToSegmentDistance(point, _points[i-1], _points[i], 
                                                             segmentNormal, segmentLength,  
                                                             ref chosenPoint);
                 if (d < minDistance)
                 {
-                    minDistance = d;
-                    onPath = chosenPoint;
-                    tStruct.tangent = segmentNormal;
+					minDistance = d;
+					onPath = chosenPoint; 
+					pathRelative.tangent = segmentNormal;
+					pathRelative.segmentIndex = i;
                 }
             }
 
             // measure how far original point is outside the Pathway's "tube"
-            tStruct.outside = (onPath - point).magnitude - radius;
-
-            // return point on path
+            pathRelative.outside = (onPath - point).magnitude - _radius;
+			
+			// return point on path
             return onPath;
         }
 
-        public override float mapPointToPathDistance(Vector3 point)
+        public override float MapPointToPathDistance(Vector3 point)
         {
+			if (_points.Count < 2)
+				return 0;
+
+			
             float d;
             float minDistance = float.MaxValue;
             float segmentLengthTotal = 0;
             float pathDistance = 0;
 
-            for (int i = 1; i < points.Length; i++)
+            for (int i = 1; i < _points.Count; i++)
             {
                 float   segmentProjection = 0;
-                float   segmentLength = lengths[i];
-                Vector3 segmentNormal = normals[i];
-                d = OpenSteerUtility.PointToSegmentDistance(point, points[i-1], points[i], 
+                float   segmentLength = _lengths[i];
+                Vector3 segmentNormal = _normals[i];
+                d = OpenSteerUtility.PointToSegmentDistance(point, _points[i-1], _points[i], 
                                                             segmentNormal, segmentLength, 
                                                             ref segmentProjection);
                 if (d < minDistance)
@@ -207,27 +220,29 @@ namespace UnitySteer
             return pathDistance;
         }
 
-        public override Vector3 mapPathDistanceToPoint(float pathDistance)
+        public override Vector3 MapPathDistanceToPoint(float pathDistance)
         {
             // clip or wrap given path distance according to cyclic flag
             float remaining = pathDistance;
             if (IsCyclic)
             {
-                remaining = pathDistance - (totalPathLength * Mathf.Floor(pathDistance / totalPathLength));
+                remaining = pathDistance - (_totalPathLength * Mathf.Floor(pathDistance / _totalPathLength));
             }
             else
             {
-                if (pathDistance < 0) return points[0];
-                if (pathDistance >= totalPathLength) return points [points.Length-1];
+                if (pathDistance < 0) 
+					return _points.First;
+                if (pathDistance >= _totalPathLength) 
+					return _points.Last;
             }
 
             // step through segments, subtracting off segment lengths until
             // locating the segment that contains the original pathDistance.
             // Interpolate along that segment to find 3d point value to return.
-            Vector3 result=Vector3.zero;
-            for (int i = 1; i < points.Length; i++)
+            Vector3 result = Vector3.zero;
+            for (int i = 1; i < _points.Count; i++)
             {
-                float segmentLength = lengths[i];
+                float segmentLength = _lengths[i];
                 if (segmentLength < remaining)
                 {
                     remaining -= segmentLength;
@@ -235,12 +250,19 @@ namespace UnitySteer
                 else
                 {
                     float ratio = remaining / segmentLength;
-                    result = Vector3.Lerp(points[i - 1], points[i], ratio);
+                    result = Vector3.Lerp(_points[i - 1], _points[i], ratio);
                     break;
                 }
             }
             return result;
         }
+		
+		public override void DrawGizmos ()
+		{
+			for (var i = 0; i < _points.Count - 1; i++)
+			{
+				Debug.DrawLine(_points[i], _points[i+1], Color.green);
+			}
+		}
     }
 }
-#endif

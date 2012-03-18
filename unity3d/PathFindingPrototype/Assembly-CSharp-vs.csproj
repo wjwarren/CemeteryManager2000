@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.21022</ProductVersion>
+	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{205BC273-5593-3083-BAC1-9CB26470D0F7}</ProjectGuid>
 	<OutputType>Library</OutputType>
@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_3_4_2;UNITY_3_4;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_3_5_0;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -44,10 +44,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Script\CemeteryManager2K\RandomPathFinder.cs" />
+     <Compile Include="Assets\Script\CemeteryManager2K\ai\npc\steering\AngryAntPolylinePathway.cs" />
+     <Compile Include="Assets\Script\CemeteryManager2K\ai\npc\steering\NPCController.cs" />
+     <Compile Include="Assets\Script\CemeteryManager2K\ai\npc\steering\RandomPathFinder.cs" />
      <Compile Include="Assets\Script\DemoSeeker.cs" />
-     <Compile Include="Assets\Script\UnitySteer\AngryAntPathway.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\AutonomousVehicle.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Behaviors\DetectableObject.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Behaviors\Examples\SteerForPathPredictiveTrivial.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Behaviors\Examples\SteerForPathTrivial.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\Radar.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\RadarPing.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SphericalObstacleData.cs" />
@@ -56,34 +60,37 @@
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForEvasion.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForNeighborAvoidance.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForNeighbors.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForPathSimplified.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForPoint.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForPursuit.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForSeparation.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForSpeed.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForSphericalObstacleAvoidance.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForTarget.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForTether.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerForWander.cs" />
-     <Compile Include="Assets\Script\UnitySteer\Behaviors\SteerToFollowPath.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\Steering.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\Vehicle.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Behaviors\VehicleLookAtOverride.cs" />
      <Compile Include="Assets\Script\UnitySteer\Helpers\IRadarReceiver.cs" />
      <Compile Include="Assets\Script\UnitySteer\Helpers\ITick.cs" />
      <Compile Include="Assets\Script\UnitySteer\Helpers\RandomizePosition.cs" />
      <Compile Include="Assets\Script\UnitySteer\Helpers\SteeringEvent.cs" />
      <Compile Include="Assets\Script\UnitySteer\Helpers\Tick.cs" />
+     <Compile Include="Assets\Script\UnitySteer\IPathway.cs" />
      <Compile Include="Assets\Script\UnitySteer\Obstacle.cs" />
      <Compile Include="Assets\Script\UnitySteer\OpenSteerUtility.cs" />
      <Compile Include="Assets\Script\UnitySteer\PathWay.cs" />
-     <Compile Include="Assets\Script\UnitySteer\PolylinePathway.cs" />
      <Compile Include="Assets\Script\UnitySteer\UnderReview\Proximity.cs" />
      <Compile Include="Assets\Script\UnitySteer\UnderReview\SimpleVehicle.cs" />
      <Compile Include="Assets\Script\UnitySteer\UnderReview\SteerLibrary.cs" />
+     <Compile Include="Assets\Script\UnitySteer\UnderReview\SteerToFollowPath.cs" />
      <Compile Include="Assets\Script\UnitySteer\UnderReview\SteeringVehicle.cs" />
      <Compile Include="Assets\Script\UnitySteer\UnderReview\lq.cs" />
      <Compile Include="Assets\Script\UnitySteer\UnderReview\lqProximity.cs" />
+     <Compile Include="Assets\Script\UnitySteer\Vector3Pathway.cs" />
      <None Include="Assets\Script\Path\License.txt" />
      <None Include="Assets\Script\UnitySteer\License.txt" />
-     <None Include="Assets\Script\UnitySteer\README.TXT" />
      <None Include="Assets\Script\UnitySteer\C5\LICENSE.txt" />
  <Reference Include="Path.Runtime">
  <HintPath>Assets\Script\Path\Path.Runtime.dll</HintPath>
@@ -102,4 +109,3 @@
   -->
   
 </Project>
-	

@@ -22,7 +22,7 @@ using UnitySteer.Helpers;
 /// public float cohesionAngle   =   99;
 /// public float cohesionWeight  =    8;   
 /// </remarks>
-public class SteerForNeighbors : Steering
+public abstract class SteerForNeighbors : Steering
 {
 	#region Private properties
 	[SerializeField]
@@ -56,7 +56,7 @@ public class SteerForNeighbors : Steering
 	/// Degree accessor for the angle
 	/// </summary>
 	/// <remarks>The cosine is actually used in calculations for performance reasons</remarks>
-    public float AngleDeg
+    public float AngleDegrees
     {
         get
         {

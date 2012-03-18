@@ -14,7 +14,8 @@ using UnitySteer;
 /// vehicles, at least for purposes of estimation, avoidance, pursuit, etc.
 /// In this case, the base Vehicle class can be used to provide an interface
 /// to whatever is doing the moving, like a CharacterMotor.</remarks>
-public class Vehicle: MonoBehaviour
+[AddComponentMenu("UnitySteer/Vehicle/Vehicle")]
+public class Vehicle : DetectableObject
 {
 	/// <summary>
 	/// Minimum force squared magnitude threshold
@@ -23,52 +24,40 @@ public class Vehicle: MonoBehaviour
 	
 	#region Private fields
 	Steering[] _steerings;
+	float _squaredArrivalRadius;
 	
 	[SerializeField]
-	bool _drawGizmos = false;
-
-	/// <summary>
-	/// The vehicle's center in the transform
-	/// </summary>
-	[SerializeField]
-	[HideInInspector]
-	Vector3 _center;
-	/// <summary>
-	/// The vehicle's center in the transform, scaled to by the transform's lossyScale
-	/// </summary>
-	[SerializeField]
-	[HideInInspector]
-	Vector3 _scaledCenter;
-
+	float _speedFactorOnTurn = 1;
+	
 	[SerializeField]
 	bool _hasInertia = false;
 
 	[SerializeField]
 	/// <summary>
-	/// Internally-assigned Mass for the vehicle.
+	/// Internally-assigned mass for the vehicle.
 	/// </summary>
 	/// <remarks>
 	/// This value will be disregarded if the object has a rigidbody, and
-	/// that rigidbody's mass value will be used instead.
+	/// that rigidbody's mass value will be used instead.  You can change
+	/// this behavior by setting OverrideRigibodyMass to TRUE.
 	////remarks>
 	float _internalMass = 1;
 	
 	[SerializeField]
+	bool _overrideRigidbodyMass = false;
+
+	[SerializeField]
 	bool _isPlanar = false;
 	
 	/// <summary>
-	/// The vehicle's radius.
+	/// The vehicle's arrival radius.
 	/// </summary>
+	/// <remarks>The difference between the radius and arrival radius is that
+	/// the first is used to determine the area the vehicle covers, whereas the
+	/// second one is a value used to determine if a vehicle is close enough
+	/// to a desired target.  Unlike the radius, it is not scaled with the vehicle.</remarks>
 	[SerializeField]
-	[HideInInspector]
-	float _radius = 1;
-	
-	/// <summary>
-	/// The vehicle's radius, scaled by the maximum of the transform's lossyScale values
-	/// </summary>
-	[SerializeField]
-	[HideInInspector]
-	float _scaledRadius = 1;
+	float _arrivalRadius = 1;	
 
 	float _speed = 0;
 
@@ -89,10 +78,6 @@ public class Vehicle: MonoBehaviour
 	/// </summary>
 	Radar _radar;
 	
-	/// <summary>
-	/// Cached transform for this behaviour
-	/// </summary>
-	Transform _transform;
 	#endregion
 
 
@@ -109,23 +94,6 @@ public class Vehicle: MonoBehaviour
 		}
 	}
 	
-	/// <summary>
-	/// Vehicle center on the transform
-	/// </summary>
-	/// <remarks>
-	/// This property's setter recalculates a temporary value, so it's
-	/// advised you don't re-scale the vehicle's transform after it has been set
-	/// </remarks>
-	public Vector3 Center {
-		get {
-			return this._center;
-		}
-		set {
-			_center = value;
-			RecalculateScaledValues();
-		}
-	}
-
 	/// <summary>
 	/// Does the vehicle continue going when there's no force applied to it?
 	/// </summary>
@@ -158,11 +126,11 @@ public class Vehicle: MonoBehaviour
 	public float Mass {
 		get
 		{
-			return (rigidbody != null) ? rigidbody.mass : _internalMass;
+			return (rigidbody != null && !_overrideRigidbodyMass) ? rigidbody.mass : _internalMass;
 		}
 		set
 		{
-			if( rigidbody != null )
+			if(rigidbody != null && !_overrideRigidbodyMass)
 			{
 				rigidbody.mass = value;
 			}
@@ -198,16 +166,29 @@ public class Vehicle: MonoBehaviour
 	}
 	
 	/// <summary>
-	/// Vehicle's position
+	/// Indicates if the vehicle's InternalMass should override whatever 
+	/// value is configured for the rigidbody, as far as speed calculations
+	/// go.
 	/// </summary>
-	/// <remarks>The vehicle's position is the transform's position displaced 
-	/// by the vehicle center</remarks>
-	public Vector3 Position {
+	/// <remarks>
+	/// Setting this value to TRUE will allow you to use the vehicle's 
+	/// InternalMass for speed calculations, while configuring the rigidbody's
+	/// independently for how the vehicle interacts with the physics engine.
+	/// 
+	/// Added when I encountered a case where I wanted to make it easier for 
+	/// an agent with a rigidbody to climb a slope, while still maintaining
+	/// the speed calculations.
+	/// 
+	/// The default is FALSE, to avoid breaking existing behavior.
+	/// </remarks>
+	public bool OverrideRigidbodyMass {
 		get {
-			return _transform.position + _scaledCenter;
+			return this._overrideRigidbodyMass;
+		}
+		set {
+			_overrideRigidbodyMass = value;
 		}
 	}
-	
 
 	/// <summary>
 	/// Radar assigned to this vehicle
@@ -224,38 +205,22 @@ public class Vehicle: MonoBehaviour
 
 
 	/// <summary>
-	/// Vehicle radius
+	/// Vehicle arrival radius
 	/// </summary>
-	/// <remarks>
-	/// This property's setter recalculates a temporary value, so it's
-	/// advised you don't re-scale the vehicle's transform after it has been set
-	/// </remarks>
-	public float Radius {
+	public float ArrivalRadius {
 		get {
-			return _radius;
+			return _arrivalRadius;
 		}
 		set {
-			_radius = Mathf.Clamp(value, 0.01f, float.MaxValue);
-			
+			_arrivalRadius = Mathf.Clamp(value, 0.01f, float.MaxValue);
 			RecalculateScaledValues();			
 		}
 	}
-
-	/// <summary>
-	/// The vehicle's center in the transform, scaled to by the transform's lossyScale
-	/// </summary>
-	public Vector3 ScaledCenter {
-		get {
-			return this._scaledCenter;
-		}
-	}
 	
-	/// <summary>
-	/// The vehicle's radius, scaled by the maximum of the transform's lossyScale values
-	/// </summary>
-	public float ScaledRadius {
+	public float SquaredArrivalRadius 
+	{
 		get {
-			return this._scaledRadius;
+			return this._squaredArrivalRadius;
 		}
 	}
 
@@ -271,6 +236,29 @@ public class Vehicle: MonoBehaviour
 		}
 	}
 	
+	/// <summary>
+	/// How much of the vehicle's speed should count against it when turning
+	/// </summary>
+	/// <value>
+	/// The speed factor on turn.
+	/// </value>
+	/// <remarks>
+	/// By default, RegenerateLocalSpace divides the new velocity by the 
+	/// vehicle's speed.  This value will set if the full Speed should be
+	/// used as a divider (when set to 1) or a fraction of it.
+	/// </remarks>
+	public float SpeedFactorOnTurn 
+	{
+		get 
+		{
+			return this._speedFactorOnTurn;
+		}
+		set 
+		{
+			_speedFactorOnTurn = Mathf.Max(0, value);
+		}
+	}
+
 	/// <summary>
 	/// Array of steering behaviors
 	/// </summary>
@@ -293,11 +281,10 @@ public class Vehicle: MonoBehaviour
 	#endregion
 
 	#region Methods
-	protected void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
 		_steerings = GetComponents<Steering>();
-		_transform = GetComponent<Transform>();
-		RecalculateScaledValues();
 	}
 	
 	protected virtual void RegenerateLocalSpace (Vector3 newVelocity)
@@ -309,7 +296,7 @@ public class Vehicle: MonoBehaviour
 		 */
  		if (Speed > 0 && newVelocity.sqrMagnitude > MIN_FORCE_THRESHOLD)
 		{
-			var newForward = newVelocity / Speed;
+			var newForward = (SpeedFactorOnTurn != 0) ? newVelocity / (Speed * SpeedFactorOnTurn) : newVelocity;
 			newForward.y = IsPlanar ? _transform.forward.y : newForward.y;
 			
 			_transform.forward = newForward;
@@ -337,10 +324,10 @@ public class Vehicle: MonoBehaviour
 	/// <summary>
 	/// Recalculates the vehicle's scaled radius and center
 	/// </summary>
-	protected void RecalculateScaledValues() {
-		var scale  = _transform.lossyScale;
-		_scaledRadius = _radius * Mathf.Max(scale.x, Mathf.Max(scale.y, scale.z));
-		_scaledCenter = Vector3.Scale(_center, scale);
+	protected override void RecalculateScaledValues() 
+	{
+		base.RecalculateScaledValues();
+		_squaredArrivalRadius = _arrivalRadius * _arrivalRadius;
 	}
 	
 	
@@ -353,7 +340,7 @@ public class Vehicle: MonoBehaviour
 	/// <returns>
 	/// Vehicle position<see cref="Vector3"/>
 	/// </returns>
-	public virtual Vector3 PredictFuturePosition(float predictionTime)
+	public override Vector3 PredictFuturePosition(float predictionTime)
     {
         return _transform.position + (Velocity * predictionTime);
 	}
@@ -419,10 +406,13 @@ public class Vehicle: MonoBehaviour
 	/// <param name="target">
 	/// Target position <see cref="Vector3"/>
 	/// </param>
+	/// <param name="considerVelocity">
+	/// Should the current velocity be taken into account?
+	/// </param>
 	/// <returns>
 	/// Seek vector <see cref="Vector3"/>
 	/// </returns>
-	public Vector3 GetSeekVector(Vector3 target)
+	public Vector3 GetSeekVector(Vector3 target, bool considerVelocity)
 	{
 		/*
 		 * First off, we calculate how far we are from the target, If this
@@ -430,8 +420,16 @@ public class Vehicle: MonoBehaviour
 		 * the vehicle to stop.
 		 */
 		Vector3 force = Vector3.zero;
-        float d = Vector3.Distance(Position, target);
-        if (d > Radius)
+		
+		// If we're dealing with a planar vehicle, disregard the target's 
+		// Y position from the calculation
+		if (IsPlanar)
+		{
+			target.y = Position.y;
+		}
+		
+        float d = (Position - target).sqrMagnitude;
+        if (d > SquaredArrivalRadius)
 		{
 			/*
 			 * But suppose we still have some distance to go. The first step
@@ -443,10 +441,22 @@ public class Vehicle: MonoBehaviour
 			 * It doesn't apply the steering itself, simply returns the value so
 			 * we can continue operating on it.
 			 */
-			force = target - Position - Velocity;
+			force = target - Position;
+			if (considerVelocity)
+			{
+				force -= Velocity;
+			}
 		}
 		return force;
 	}
+	
+	/// <summary>
+	/// Wrapper for GetSeekVector, necessary because MonoDevelop chokes on default parameters.
+	/// </summary>
+	public Vector3 GetSeekVector(Vector3 target)
+	{
+		return GetSeekVector(target, true);
+	}	
 	
 	/// <summary>
 	/// Returns a returns a maxForce-clipped steering force along the 
@@ -525,7 +535,7 @@ public class Vehicle: MonoBehaviour
 		float projection = Vector3.Dot(relTangent, relPosition);
 
 		return projection / relSpeed;
-	}	
+	}
 	
 	
 	/// <summary>
@@ -552,7 +562,39 @@ public class Vehicle: MonoBehaviour
 												  ref Vector3 ourPosition, 
 												  ref Vector3 hisPosition)
 	{
-		Vector3	   myTravel = _transform.forward 	   *	   Speed * time;
+		return ComputeNearestApproachPositions(other, time, ref ourPosition, ref hisPosition, Speed, _transform.forward);
+	}		
+	
+	/// <summary>
+	/// Given the time until nearest approach (predictNearestApproachTime)
+	/// determine position of each vehicle at that time, and the distance
+	/// between them
+	/// </summary>
+	/// <returns>
+	/// Distance between positions
+	/// </returns>
+	/// <param name='other'>
+	/// Other vehicle to compare against
+	/// </param>
+	/// <param name='time'>
+	/// Time to estimate.
+	/// </param>
+	/// <param name='ourPosition'>
+	/// Our position.
+	/// </param>
+	/// <param name='hisPosition'>
+	/// The other vehicle's position.
+	/// </param>
+	/// <param name='ourForward'>
+	/// Forward vector to use instead of the vehicle's.
+	/// </param>
+	public float ComputeNearestApproachPositions(Vehicle other, float time, 
+												  ref Vector3 ourPosition, 
+												  ref Vector3 hisPosition,
+	                                             float ourSpeed,
+	                                             Vector3 ourForward)
+	{
+		Vector3	   myTravel = ourForward 	   		   *	ourSpeed * time;
 		Vector3 otherTravel = other._transform.forward * other.Speed * time;
 
 		ourPosition = Position 		 + myTravel;
@@ -562,16 +604,13 @@ public class Vehicle: MonoBehaviour
 	}	
 	
 	
-	void OnDrawGizmos()
+	protected override void OnDrawGizmos()
 	{
-		// Since this value gets assigned on Awake, we need to assign it when on the editor
 		if (_drawGizmos)
 		{
-			if (_transform == null)
-				_transform = GetComponent<Transform>();
-	
+			base.OnDrawGizmos();
 			Gizmos.color = Color.grey;
-			Gizmos.DrawWireSphere(Position, _scaledRadius);
+			Gizmos.DrawWireSphere(Position, _arrivalRadius);
 		}
 	}
 	#endregion

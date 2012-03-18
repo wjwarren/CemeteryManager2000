@@ -1,11 +1,39 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\CemeteryManager2K\RandomPathFinder.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs">
     <Files>
-      <File FileName="Assets\Script\DemoSeeker.cs" Line="27" Column="50" />
-      <File FileName="Assets\Script\CemeteryManager2K\RandomPathFinder.cs" Line="52" Column="19" />
       <File FileName="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs" Line="93" Column="3" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Script" expanded="True">
+                <Node name="CemeteryManager2K" expanded="True">
+                  <Node name="ai" expanded="True">
+                    <Node name="npc" expanded="True">
+                      <Node name="steering" expanded="True" />
+                    </Node>
+                  </Node>
+                  <Node name="path" expanded="True" />
+                </Node>
+                <Node name="UnitySteer" expanded="True">
+                  <Node name="Behaviors" expanded="True" />
+                  <Node name="PathWay.cs" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

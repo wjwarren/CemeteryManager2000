@@ -6,15 +6,12 @@ using UnitySteer.Helpers;
 /// <summary>
 /// Steers a vehicle to pursuit another one
 /// </summary>
+[AddComponentMenu("UnitySteer/Steer/... for Pursuit")]
 public class SteerForPursuit : Steering
 {
 	#region Private fields
-	bool _reportedArrival = false;
-	
-	SteeringEventHandler<Vehicle> _onArrival;
-	
 	[SerializeField]
-	Vehicle _quarry;
+	DetectableObject _quarry;
 	
 	[SerializeField]
 	float _maxPredictionTime = 5;
@@ -33,26 +30,18 @@ public class SteerForPursuit : Steering
 		}
 	}
 	
-	public SteeringEventHandler<Vehicle> OnArrival {
-		get {
-			return this._onArrival;
-		}
-		set {
-			_onArrival = value;
-		}
-	}
-
 	/// <summary>
 	/// Target being pursued
 	/// </summary>
 	/// <remarks>When set, it will clear the flag that indicates we've already reported that we arrived</remarks>
-	public Vehicle Quarry {
+	public DetectableObject Quarry {
 		get {
 			return this._quarry;
 		}
 		set {
-			if (_quarry != value) {
-				_reportedArrival = false;
+			if (_quarry != value) 
+			{
+				ReportedArrival = false;
 				_quarry = value;
 			}
 		}
@@ -153,14 +142,6 @@ public class SteerForPursuit : Steering
 			Debug.DrawRay(target, Vector3.up * 4, Color.cyan);
 			#endif
 		}
-		
-		// Raise the arrival event
-		if (!_reportedArrival && _onArrival != null && force == Vector3.zero) {
-			_reportedArrival = true;
-			_onArrival(new SteeringEvent<Vehicle>(this, "arrived", Quarry));
-		}
-		else
-			_reportedArrival = force == Vector3.zero;
 		
 		return force;
 	}

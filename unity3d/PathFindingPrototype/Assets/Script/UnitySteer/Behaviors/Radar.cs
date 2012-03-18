@@ -11,9 +11,13 @@ using UnitySteer.Helpers;
 /// <remarks>Different radars will implement their own detection styles, from
 /// "pinging" every so often with Physics.OverlapSphere to handling visibility
 /// OnTriggerEnter/Exit</remarks>
-public class Radar: MonoBehaviour, ITick {
+[AddComponentMenu("UnitySteer/Radar/Radar")]
+public class Radar : MonoBehaviour, ITick {
 	#region Private properties
 	SteeringEventHandler<Radar> _onDetected;
+	
+	[SerializeField]
+	bool _detectDisabledVehicles;
 	
 	[SerializeField]
 	Tick _tick;
@@ -46,6 +50,19 @@ public class Radar: MonoBehaviour, ITick {
 		}
 	}
 	
+	/// <summary>
+	/// Indicates if the radar will detect disabled vehicles. 
+	/// </summary>
+	public bool DetectDisabledVehicles 
+	{
+		get {
+			return this._detectDisabledVehicles;
+		}
+		set {
+			_detectDisabledVehicles = value;
+		}
+	}
+
 	/// <summary>
 	/// List of obstacles detected by the radar
 	/// </summary>
@@ -165,7 +182,7 @@ public class Radar: MonoBehaviour, ITick {
 		foreach (var other in _detected)
 		{
 			var vehicle = other.gameObject.GetComponent<Vehicle>();
-			if (vehicle != null && other.gameObject != this.gameObject)
+			if (vehicle != null && (vehicle.enabled || _detectDisabledVehicles) && other.gameObject != this.gameObject)
 			{
 				_vehicles.Add(vehicle);
 			}
