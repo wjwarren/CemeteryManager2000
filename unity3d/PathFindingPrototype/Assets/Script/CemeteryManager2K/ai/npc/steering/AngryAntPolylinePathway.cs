@@ -8,26 +8,42 @@ public class AngryAntPolylinePathway : Vector3Pathway {
 	private Path aaPath;
 	private IList<Vector3> aaPoints;
 	
-	/**
-	 * 
-	 */
+	private bool debug = false;
+	
+	/// <summary>
+	/// CONSTRUCTOR
+	/// </summary>
 	public AngryAntPolylinePathway() {
+		// Do not use, it's useless! ;)
 	}
 	
-	/**
-	 * 
-	 */
+	/// <summary>
+	/// CONSTRUCTOR
+	/// </summary>
+	///
+	/// <param name="path">The AngryAnt Path to follow.</param>
+	/// <param name="defaultRadius"> A default path radius to use (when there are no segments).</param>
+	/// <param name="cyclic">Whether or not the path is cyclic (comes back to the start).</param>
 	public AngryAntPolylinePathway(Path path, float defaultRadius, bool cyclic){
+		if(debug) Debug.Log("AngryAntPolylinePathway.AngryAntPolylinePathway()");
+		
 		preInitialize(path, defaultRadius, cyclic);
 		Initialize(aaPoints, _radius, cyclic);
 	}
 	
-	/**
-	 * 
-	 */
+	/// <summary>
+	/// Does some additional setup needed before calling the 
+	/// Vector3Pathway.Initialize() method.
+	/// 
+	/// Most of the work is converting the AngryAnt path to 
+	/// a new ArrayList<Vector3> that Vector3Pathway understands.
+	/// </summary>
+	/// 
+	/// <param name="path">The AngryAnt Path to follow.</param>
+	/// <param name="defaultRadius">A default path radius to use (when there are no segments).</param>
+	/// <param name="cyclic">Whether or not the path is cyclic (comes back to the start).</param>
 	protected void preInitialize(Path path, float defaultRadius, bool cyclic) {
-		Debug.Log("AngryAntPolylinePathway.preInitialize()");
-		Debug.Log("Segments: " + path.Segments.Count.ToString());
+		if(debug) Debug.Log("AngryAntPolylinePathway.preInitialize()");
 		
 		int pointCount = -1;
 		
@@ -69,11 +85,6 @@ public class AngryAntPolylinePathway : Vector3Pathway {
 		
 		// Add end point.
 		aaPoints.Add(path.EndPosition);
-		
-		// TEST - print all points
-		for(int j = 0; j < aaPoints.Count; j++) {
-			Debug.Log(" - Point: " + aaPoints[j].ToString());
-		}
 	}
 	
 }

@@ -1,12 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\CemeteryManager2K\ai\npc\steering\NPCController.cs">
     <Files>
       <File FileName="..\FollowCameraPrototype\Assets\Scripts\CemeteryManager2K\CameraManager.cs" Line="97" Column="9" />
-      <File FileName="Assets\Script\CemeteryManager2K\ai\npc\steering\NPCController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\UnitySteer\Vector3Pathway.cs" Line="37" Column="39" />
-      <File FileName="Assets\Script\UnitySteer\PathWay.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\UnitySteer\Behaviors\Steering.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\CemeteryManager2K\ai\npc\steering\NPCController.cs" Line="19" Column="45" />
+      <File FileName="Assets\Script\UnitySteer\Behaviors\SteerForPathSimplified.cs" Line="11" Column="1" />
+      <File FileName="Assets\Script\CemeteryManager2K\ai\npc\steering\AngryAntPolylinePathway.cs" Line="51" Column="21" />
+      <File FileName="Assets\Script\CemeteryManager2K\character\CharacterState.cs" Line="11" Column="7" />
+      <File FileName="Assets\Script\CemeteryManager2K\ai\npc\steering\RandomPathFinder.cs" Line="57" Column="45" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,15 +18,15 @@
                 <Node name="CemeteryManager2K" expanded="True">
                   <Node name="ai" expanded="True">
                     <Node name="npc" expanded="True">
-                      <Node name="steering" expanded="True" />
+                      <Node name="steering" expanded="True">
+                        <Node name="NPCController.cs" selected="True" />
+                      </Node>
                     </Node>
                   </Node>
+                  <Node name="character" expanded="True" />
                 </Node>
                 <Node name="UnitySteer" expanded="True">
-                  <Node name="Behaviors" expanded="True">
-                    <Node name="Steering.cs" selected="True" />
-                  </Node>
-                  <Node name="Helpers" expanded="True" />
+                  <Node name="Behaviors" expanded="True" />
                 </Node>
               </Node>
             </Node>

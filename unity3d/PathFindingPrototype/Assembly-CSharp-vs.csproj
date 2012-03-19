@@ -47,6 +47,7 @@
      <Compile Include="Assets\Script\CemeteryManager2K\ai\npc\steering\AngryAntPolylinePathway.cs" />
      <Compile Include="Assets\Script\CemeteryManager2K\ai\npc\steering\NPCController.cs" />
      <Compile Include="Assets\Script\CemeteryManager2K\ai\npc\steering\RandomPathFinder.cs" />
+     <Compile Include="Assets\Script\CemeteryManager2K\character\CharacterState.cs" />
      <Compile Include="Assets\Script\DemoSeeker.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\AutonomousVehicle.cs" />
      <Compile Include="Assets\Script\UnitySteer\Behaviors\DetectableObject.cs" />

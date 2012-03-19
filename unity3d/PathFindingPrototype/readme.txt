@@ -1,4 +1,4 @@
-The RandomPathFinder.cs script finds and shows a next random path every 1.5s. It requires a Navigator from the Path 2.0 library and a populated (meaning at least 2) destinations list.
+NPC walking around the scene, powered by the NPCController class.
 
 Requirements:
 - http://angryant.com/path/
