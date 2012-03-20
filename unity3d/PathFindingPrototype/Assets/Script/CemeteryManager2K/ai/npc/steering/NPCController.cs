@@ -27,7 +27,7 @@ public class NPCController : MonoBehaviour {
 	// How long it takes for the character to turn a full turn (aka 360 degrees).
 	public float rotationTime = 2.0f;
 	
-	private CharacterState state;
+	private CharacterState _state;
 	
 	private RandomPathFinder pathFinder;
 	private SteerForPathSimplified pathFollower;
@@ -40,10 +40,6 @@ public class NPCController : MonoBehaviour {
 	
 	// The rotation needed before starting on a new path.
 	private Quaternion targetRotation;
-	// The rotation needed before starting on a new path.
-	private Quaternion startRotation;
-	// The amount of rotation needed to reach the targetRotation.
-	private float deltaRotation;
 	// How much to rotate per second.
 	private float rotationStep;
 	
@@ -119,8 +115,8 @@ public class NPCController : MonoBehaviour {
 		if(debug) Debug.Log("NPCController.startWalking() " + Time.time.ToString());
 		
 		state = CharacterState.WALKING;
-		pathFollower.Path = aaPathway;
 		
+		pathFollower.Path = aaPathway;
 		pathFollower.OnArrival = arrivalHandler;
 	}
 	
@@ -132,25 +128,29 @@ public class NPCController : MonoBehaviour {
 	private void rotate() {
 		//if(debug) Debug.Log("NPCController.rotate()");
 		
-		int rotationMultiplier = (deltaRotation < 0) ? -1 : 1;
+		// TODO: Better easing.
+		transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationStep);
+		float deltaLeft = -1;
 		
-		transform.Rotate(Vector3.up, rotationMultiplier * rotationStep * Time.deltaTime * Mathf.Rad2Deg, Space.Self);
+		if((transform.rotation.w < 0 || targetRotation.w < 0) && !(transform.rotation.w < 0 && targetRotation.w < 0)) {
+			deltaLeft = transform.rotation.y - targetRotation.y * -1;
+		} else {
+			deltaLeft = transform.rotation.y - targetRotation.y;
+		}
 		
-		if(Math.Abs(targetRotation.y - transform.rotation.y) < rotationStep * Time.deltaTime * 0.25 ) {
+		if(Math.Abs(deltaLeft) < 0.02) {
+			transform.rotation = targetRotation;
 			state = CharacterState.READY;
 		}
 	}
 	
 	/// <summary>
-	/// Does some calculations and setup before starting
-	/// to rotate our NPC to face the desired way.
+	/// Sets the current state to rotating.
 	/// </summary>
-	private void setupRotation() {
-		if(debug) Debug.Log("NPCController.setupRotation()");
+	private void setRotatingState() {
+		if(debug) Debug.Log("NPCController.setRotationState()");
 		
 		state = CharacterState.ROTATING;
-		startRotation = new Quaternion(0, transform.rotation.y, 0, 0);
-		deltaRotation = targetRotation.y - startRotation.y;
 	}
 	
 	/// <summary>
@@ -165,17 +165,25 @@ public class NPCController : MonoBehaviour {
 		Quaternion rotation = new Quaternion();
 		
 		if(path.Count > 1) {
-			Quaternion oldRotation = transform.rotation;
-			transform.LookAt(path[1]);
-			rotation = new Quaternion(0, transform.rotation.y, 0, 0);
-			//rotation = Quaternion.LookRotation(path[1]);
-			transform.rotation = oldRotation;
+			rotation = Quaternion.LookRotation(path[1] - transform.position, Vector3.up);
+			// Rotate Y only.
+			rotation.x = rotation.z = 0;
 		} else {
 			// Incorrect path, but let's not worry here.
 			rotation = new Quaternion(0, transform.rotation.y, 0, 0);
 		}
 		
 		return rotation;
+	}
+	
+	private CharacterState state {
+		get {
+			return _state;
+		}
+		set {
+			Debug.Log("Character state: " + value.ToString());
+			_state = value;
+		}
 	}
 	
 	// =================
@@ -193,7 +201,7 @@ public class NPCController : MonoBehaviour {
 		
 		targetRotation = getTargetRotation(aaPathway.Path);
 		if(targetRotation.y != transform.rotation.y) {
-			setupRotation();
+			setRotatingState();
 		} else if(!continueIdling()) {
 			startWalking();
 		}
